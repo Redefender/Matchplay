@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <%- include('partials/meta.ejs'); -%>
+   </head>
+   <body>
+      <%- include('partials/header.ejs'); -%> 
+      <main>
+         <%- include('partials/navigation.ejs'); -%>
+         <h3>Create Tennis Event</h3>
+         <form id="newConnection" action="#">
+            <label for="name">Name</label> 
+            <input type="text" name="name">
+            <br>
+            <br>
+            <label for="Type">Type</label>
+            <input type="text" name="Type">
+            <br>
+            <br>
+            <label for="details">Details</label>
+            <textarea name="details"cols="30" rows="10"></textarea>
+            <br>
+            <br>
+            <label for="dateTime">When</label>
+            <input type="text" name="dateTime">
+            <br>
+            <br>
+            <input type="submit">
+         </form>
+      </main>
+      <%- include('partials/footer.ejs'); -%>
+   </body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <%- include('partials/meta.ejs'); -%>
+   </head>
+   <body>
+      <%- include('partials/header.ejs'); -%> 
+      <main>
+         <%- include('partials/navigation.ejs'); -%>
+         <aside id="connection-details">
+            <h3><%- connection.name -%></h3>
+            <img id="profileImg" src="/img/coach.png" alt="this should appear">
+            <p><%- connection.type -%></p>
+            <p><%- connection.dateTime -%></p>
+         </aside>
+         <article>
+            <p><%- connection.details -%></p>
+         </article>
+         <form method="POST">
+            <input type="hidden" name="connectionID" value="<%= connection.id %>">
+            <input type="text" name="test" value="">
+
+            <button  class="green" formaction="connections/savedConnections/yes" 
+                                                      type="submit">I'm In!</button>
+
+            <button class="red" formaction="connections/savedConnections/no"
+                                                      type="submit">No Thanks</button>
+
+            <button class="blue" formaction="connections/savedConnections/maybe"
+                                                      type="submit">Maybe</button>
+         </form>
+      </main>
+      <%- include('partials/footer.ejs'); -%>
+   </body>
+</html>

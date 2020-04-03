@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <%- include('partials/meta.ejs'); -%>
+   </head>
+   <body>
+      <%- include('partials/header.ejs'); -%> 
+      <main>
+         <%- include('partials/navigation.ejs'); -%>
+         <h3>Welcome to the Site!</h3>
+         <form action="/user/login" method="POST">
+             <label for="username" name="username">Username</label>
+             <input type="text" name="username">
+             <label for="password" name="password">Username</label>
+             <input type="text" name="username">
+             <input type="submit" value="Login">
+         </form>
+      </main>
+      <%- include('partials/footer.ejs'); -%>
+   </body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <%- include('partials/meta.ejs'); -%>
+
+   </head>
+   <body>
+      <%- include('partials/header.ejs'); -%> 
+      <main>
+         <nav class="page-nav">
+            <h5>Norm's Connections</h5>
+            <h5>Welcome, Norm!</h5>
+         </nav>
+         <form action="savedConnections">
+            <table id="connectionsTable">
+               <tr>
+                  <th>Meetups</th>
+                  <th>Category</th>
+                  <th>Going?</th>
+                  <th></th>
+               </tr>
+               <tr>
+                  <td>Intro Lesson</td>
+                  <td>Lesson</td>
+                  <td>Yes</td>
+                  <td>
+                     <button type="submit" formaction="connection" class="green">update</button>
+                     <button type="submit" class="red">delete</button>
+                  </td>
+               </tr>
+               <% for(var i =0; i< savedConnections.length; i++) { %>
+                  <tr>
+                     <td><%= savedConnections[i].name %></td>
+                     <td><%= savedConnections[i].type %></td>
+                     <td><%= savedConnections[i].going %></td>
+                     <td>
+                        <button type="submit" formaction="connection" class="green">update</button>
+                        <button type="submit" class="red">delete</button>
+                     </td>
+                  </tr>
+               <% } %>
+            </table>
+         </form>
+      </main>
+      <%- include('partials/footer.ejs'); -%>
+   </body>
+</html>

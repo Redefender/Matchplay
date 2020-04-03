@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <%- include('partials/meta.ejs'); -%>
+   </head>
+   <body>
+      <%- include('partials/header.ejs'); -%> 
+      <main>
+         <%- include('partials/navigation.ejs'); -%>
+       
+            <% for(let type of connectionTypes){ %>
+               <article>
+                  <h3><%- type -%></h3>
+                  <ul>
+                     <% for(var i =0; i< connections.length; i++){ %>
+                        <% if(connections[i].type === type){ %>
+                           <li>
+                              <a href="connections?id=<%= connections[i].id %>" ><%- connections[i].name -%></a>
+                           </li>
+                        <% } %>
+                     <% } %>
+                  </ul>
+               </article>
+            <% } %>
+
+      </main>
+      <%- include('partials/footer.ejs'); -%>
+   </body>
+</html>
