@@ -1,10 +1,10 @@
 class Connection {
     constructor(id, name, type, details, dateTime){
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.details = details;
-        this.dateTime = dateTime;
+        this._id = id;
+        this._name = name;
+        this._type = type;
+        this._details = details;
+        this._dateTime = dateTime;
     }
 
     get id(){

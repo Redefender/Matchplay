@@ -8,10 +8,10 @@
       <%- include('partials/header.ejs'); -%> 
       <main>
          <nav class="page-nav">
-            <h5>Norm's Connections</h5>
+            <%- include('partials/navigation.ejs'); -%>
             <h5>Welcome, Norm!</h5>
          </nav>
-         <form action="savedConnections">
+         <form >
             <table id="connectionsTable">
                <tr>
                   <th>Meetups</th>
@@ -19,23 +19,16 @@
                   <th>Going?</th>
                   <th></th>
                </tr>
-               <tr>
-                  <td>Intro Lesson</td>
-                  <td>Lesson</td>
-                  <td>Yes</td>
-                  <td>
-                     <button type="submit" formaction="connection" class="green">update</button>
-                     <button type="submit" class="red">delete</button>
-                  </td>
-               </tr>
-               <% for(var i =0; i< savedConnections.length; i++) { %>
+ 
+               <% for(var i =0; i< userConnections.length; i++) { %>
                   <tr>
-                     <td><%= savedConnections[i].name %></td>
-                     <td><%= savedConnections[i].type %></td>
-                     <td><%= savedConnections[i].going %></td>
+
+                     <td><%= userConnections[i]._connection._name %></td>
+                     <td><%= userConnections[i]._connection._type %></td>
+                     <td><%= userConnections[i]._rsvp %></td>
                      <td>
-                        <button type="submit" formaction="connection" class="green">update</button>
-                        <button type="submit" class="red">delete</button>
+                        <button type="submit" formaction="/user/update/<%= userConnections[i]._connection._id %>" class="green">Update</button>
+                        <button type="submit" formmethod="POST" formaction="/user/delete/<%= userConnections[i]._connection._id %>" class="red">Delete</button>
                      </td>
                   </tr>
                <% } %>

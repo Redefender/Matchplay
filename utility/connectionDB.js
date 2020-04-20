@@ -1,6 +1,4 @@
 let connection = require('../models/connection');
-let savedConnection = require('../models/userConnection');
-let savedConnectionView = require('../viewmodels/savedConnectionView');
 const connections = [
     
     new connection("aa11", "Learn with me","lesson", 

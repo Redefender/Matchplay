@@ -1,23 +1,34 @@
 var express = require('express');
 var router = express.Router();
 var connection = require('../models/connection.js');
-var savedConnection = require('../models/userConnection');
 var connectionDB = require('../utility/connectionDB.js');
 
 router.use(function timeLog (req, res, next) {
     console.log('Time: ', Date.now())
     next()
   })
+router.get('/update/:updateID', function(req,res){
+    let updateID = req.params.updateID;
+    console.log('updateID: ' + req.params.updateID);
+    
+    res.redirect('/connections?id=' + updateID);
+    
+});
 router.get('/', function(req,res){
     
     let connections = connectionDB.getConnections();
     let id = req.query.id;
+    // if(containsEncodedComponents(id)){
+    //     id = decodeURIComponent(id);
+    // }
+
+
     let connectionTypes = connectionDB.getConnectionTypes();
 
     if(id){
         let connection = connectionDB.getConnection(id);
         if(connection !== undefined){
-            res.render('connection', {connection: connection})
+            res.render('connection', {connection: connection, session: req.session})
         }
     } else{
         // get the different connection categories
@@ -31,25 +42,22 @@ router.get('/', function(req,res){
             
         }
         
-        res.render('connections', {connections: connections, connectionTypes: connectionTypes});
+        res.render('connections', {
+            connections: connections, connectionTypes: connectionTypes, 
+            session: req.session});
     }
 
 });
 
-router.post('/savedConnections/:going', function(req,res){
-    let id = req.body.connectionID;
-    let going = req.params.going;
-    let saved = null;
 
-    saved = new savedConnection(id, going);
-    connectionDB.addSavedConnection(saved);
-    let savedConnectionsView = connectionDB.getSavedConnectionsView();
-    
-    res.render('savedConnections', { savedConnections: savedConnectionsView });
-});
 
 router.get('/newConnection', function(req,res) {
-    res.render('newConnection');
+    res.render('newConnection', {session: req.session});
 });
+
+function containsEncodedComponents(x) {
+    // ie ?,=,&,/ etc
+    return (decodeURI(x) !== decodeURIComponent(x));
+  }
 
 module.exports = router;

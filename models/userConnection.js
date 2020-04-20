@@ -1,23 +1,25 @@
+var connection = require('./connection.js');
 class UserConnection {
-    constructor(connection, rsvp){
-        this.connection = connection;
-        this.rsvp = rsvp;
+    constructor(conn, rsvp){
+        this._connection = new connection(conn.id, conn.name,
+            conn.type, conn.details, conn.dateTime);
+        this._rsvp = rsvp;
     }
 
     get rsvp(){
         return this._rsvp;
     }
 
-    set rsvp(rsvp){
-        this._rsvp = rsvp;
+    set rsvp(newrsvp){
+        this._rsvp = newrsvp;
     }
     
     get connection(){
         return this._connection;
     }
 
-    set connection(connection){
-        this._connection = connection;
+    set connection(newconnection){
+        this._connection = newconnection;
     }
 
 }

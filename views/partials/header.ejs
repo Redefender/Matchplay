@@ -4,7 +4,12 @@
     </a>
     <nav class="user-nav">
        <a href="/connections/newConnection">Host Tennis</a>
-       <a href="/user/login">Login</a>
-       <a href="/">Signup</a>
+      <% if(session && session.theUser) { %>
+         <a href="/user/savedConnections">Your Tennis</a>
+         <a href="/user/signout">Signout</a>
+      <% } else { %>
+         <a href="/user/login">Login</a>
+         <a href="/">Signup</a>
+       <% } %>
     </nav>
  </header>

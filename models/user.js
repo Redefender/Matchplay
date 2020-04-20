@@ -1,16 +1,16 @@
 class User {
     constructor(userID, firstName, lastName, emailAddress){
-        this.userID = userID;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.emailAddress = emailAddress;
+        this._userID = userID;
+        this._firstName = firstName;
+        this._lastName = lastName;
+        this._emailAddress = emailAddress;
     }
 
     get userID(){
         return this._userID;
     }
     set userID(id){
-        this._userID = userID;
+        this._userID = id;
     }
     get firstName(){
         return this._firstName;
@@ -29,12 +29,6 @@ class User {
     }
     set emailAddress(emailAddress){
         this._emailAddress = emailAddress;
-    }
-
-    toString(){
-        return 'id: ' + this.id + ' name ' + this.name + 
-        ' type: ' + this.type + ' details: ' + this.details
-        + ' dateTime: ' + this.dateTime;
     }
 }
 
