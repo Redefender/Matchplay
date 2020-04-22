@@ -176,3 +176,21 @@ footer p, footer a{
     width: 50px;
 }
 
+
+#loginForm label {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    text-align: right;
+    width: 400px;
+    line-height: 26px;
+    margin-bottom: 10px;
+}
+
+#loginForm input {
+    height: 20px;
+    flex: 0 0 200px;
+    margin-left: 10px;
+}
+
+

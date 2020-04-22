@@ -14,7 +14,6 @@ class UserProfile {
     }
     
     get userConnections(){
-        console.log('hit the getter');
         
         return this._userConnections;
     }
@@ -25,11 +24,12 @@ class UserProfile {
 
     addConnection(conn){
         console.log('within addConnection ' + JSON.stringify(conn));
+
         // check if there is another with same id
         let duplicate = false;
         for(let i =0; i< this._userConnections.length; i++){
             if(this._userConnections[i]._connection._id === conn._connection._id){
-                this._userConnections[i]._rsvp = conn._rsvp;
+                this.updateConnection(i, conn);
                 duplicate = true;
                 break;
             }
@@ -37,6 +37,10 @@ class UserProfile {
         if(!duplicate){
             this._userConnections.push(new userConnection(conn._connection, conn._rsvp));
         }
+    }
+    
+    updateConnection(userConnectionIndex, conn){
+        this._userConnections[userConnectionIndex]._rsvp = conn._rsvp;
     }
 
     deleteConnection(id){

@@ -11,29 +11,35 @@
             <%- include('partials/navigation.ejs'); -%>
             <h5>Welcome, Norm!</h5>
          </nav>
-         <form >
-            <table id="connectionsTable">
-               <tr>
-                  <th>Meetups</th>
-                  <th>Category</th>
-                  <th>Going?</th>
-                  <th></th>
-               </tr>
- 
-               <% for(var i =0; i< userConnections.length; i++) { %>
+         <% if(userConnections === undefined || userConnections.length === 0) {%>
+            <h4>No Tennis Events Have Been RSVPed</h4>
+         <% } else { %>
+            <form >
+               <table id="connectionsTable">
                   <tr>
-
-                     <td><%= userConnections[i]._connection._name %></td>
-                     <td><%= userConnections[i]._connection._type %></td>
-                     <td><%= userConnections[i]._rsvp %></td>
-                     <td>
-                        <button type="submit" formaction="/user/update/<%= userConnections[i]._connection._id %>" class="green">Update</button>
-                        <button type="submit" formmethod="POST" formaction="/user/delete/<%= userConnections[i]._connection._id %>" class="red">Delete</button>
-                     </td>
+                     <th>Meetups</th>
+                     <th>Category</th>
+                     <th>Going?</th>
+                     <th></th>
                   </tr>
-               <% } %>
-            </table>
-         </form>
+   
+                  <% for(var i =0; i< userConnections.length; i++) { %>
+                     <tr>
+
+                        <td><%= userConnections[i]._connection._name %></td>
+                        <td><%= userConnections[i]._connection._type %></td>
+                        <td><%= userConnections[i]._rsvp %></td>
+                        <td>
+                           <button type="submit" 
+                              formaction="/user/update/<%= userConnections[i]._connection._id %>" class="green">Update</button>
+                           <button type="submit" formmethod="POST" 
+                              formaction="/user/delete/<%= userConnections[i]._connection._id %>" class="red">Delete</button>
+                        </td>
+                     </tr>
+                  <% } %>
+               </table>
+            </form>
+         <% } %>
       </main>
       <%- include('partials/footer.ejs'); -%>
    </body>

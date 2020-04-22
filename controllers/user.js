@@ -10,7 +10,6 @@ var userConnection = require('../models/userConnection');
 
 
 router.get('/login', function(req,res){
-    console.log('within reouter.get');
     
     res.render('login', {session: req.session});
 
@@ -24,7 +23,7 @@ router.post('/login', function(req,res){
 
     // Grab all currently saved connections, but in this case hardcoded for now so just saying empty
     let profile = new userProfileModel(loggedInUser.userID);
-    profile.addConnection(new userConn(new connectionModel('id', 'name', 'type', 'details','dateTime'),'yes'));
+    // profile.addConnection(new userConn(new connectionModel('id', 'name', 'type', 'details','dateTime'),'yes'));
 
     req.session.userProfile = profile;
 
@@ -32,15 +31,7 @@ router.post('/login', function(req,res){
 
     req.session.save(function(err){
         if(err){
-            console.log('err: ' + err);
             
-            console.log('play ball: ' + req.session.userProfile.userConnections);
-            
-            console.log('session dets before: ' + req.session.theUser.userID);
-            console.log('session dets before: ' + req.session.theUser.userID);
-
-            
-
         }
         res.redirect('savedConnections');
     });
@@ -62,9 +53,6 @@ router.post('/savedConnections/:rsvp', function(req,res){
     
         let userConn = new userConnection(new connectionModel(conn._id, conn._name, conn._type,
             conn._details,conn._dateTime), rsvp);
-    
-        // profile.addConnection(new userConn(new connectionModel('id', 'name', 'type', 'details','dateTime'),'yes'));
-        console.log('saved userconnection ' +  JSON.stringify(userConn));
         
         // grab session profile, because session profile doesn't have prototype methods
         let updateUserProfile = new userProfileModel(req.session.userProfile._userID);

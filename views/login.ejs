@@ -8,12 +8,16 @@
       <main>
          <%- include('partials/navigation.ejs'); -%>
          <h3>Welcome to the Site!</h3>
-         <form action="/user/login" method="POST">
-             <label for="username" name="username">Username</label>
-             <input type="text" name="username">
-             <label for="password" name="password">Username</label>
-             <input type="text" name="username">
-             <input type="submit" value="Login">
+         <form id="loginForm" action="/user/login" method="POST">
+            <label>
+               Username <input type="text" name="username">
+            </label>
+            <label for="password" name="password">
+               Password <input type="text" name="username">
+            </label>
+            <label for="">
+               <input type="submit" value="Login">
+            </label>
          </form>
       </main>
       <%- include('partials/footer.ejs'); -%>
