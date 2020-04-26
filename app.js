@@ -4,22 +4,22 @@ var connectionDB = require('./utility/connectionDB.js')
 var user = require('./controllers/user.js');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-var cookieParser = require("cookie-parser");
+var mongoose = require('mongoose');
+
+// put in mongoose
+mongoose.connect('mongodb://localhost/tennis', {useNewUrlParser: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console,'connection error:'));
+
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false}));
 
 app.set('view engine', 'ejs');
 app.use(express.static('assets'));
-// app.use(cookieParser());
+
 app.use(session({httpOnly: false, cookieName: 'myCookie', secret: 'mysecret'}));
-// app.use(session({
-//     secret: 'cookie_secret',
-//     resave: false,
-//     saveUninitialized: false
-// }));
 
 app.get('/', function(req,res){
-    console.log('within the hit');
     
     res.render('index', {session: req.session});
 });
@@ -54,4 +54,4 @@ app.get('/*', function(req,res){
 
 });
 
-app.listen(3000, "127.0.0.1");
+app.listen(8084, "127.0.0.1");

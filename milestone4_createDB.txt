@@ -1,0 +1,7 @@
+{name: 'Learn with me', type: 'lesson', details: '"I am also a low level player looking to grow with other newbies', dateTime: '3/7/2020 12:00', userID: 'fake'}
+
+use tennis
+db.createCollection('users')
+db.createCollection('userProfiles')
+db.createCollection('connections')
+db.users.insert({userID: 'testuser', firstName: 'Bob', lastName: 'Smith', email: 'bobsmith@gmail.com'})

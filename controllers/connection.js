@@ -7,13 +7,7 @@ router.use(function timeLog (req, res, next) {
     console.log('Time: ', Date.now())
     next()
   })
-router.get('/update/:updateID', function(req,res){
-    let updateID = req.params.updateID;
-    console.log('updateID: ' + req.params.updateID);
-    
-    res.redirect('/connections?id=' + updateID);
-    
-});
+
 router.get('/', function(req,res){
     
     let connections = connectionDB.getConnections();

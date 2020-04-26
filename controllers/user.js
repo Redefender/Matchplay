@@ -1,7 +1,9 @@
 var express = require('express');
+var mongoose = require('mongoose');
 var router = express.Router();
-var user = require('../models/user.js');
+var userModel = require('../models/user.js');
 var userProfileModel = require('../utility/userProfile.js');
+var userProfileModelDB = require('../utility/userPRofileModel.js');
 var connectionDB = require('../utility/connectionDB.js');
 var userConn = require('../models/userConnection.js');
 var connectionModel = require('../models/connection.js');
@@ -16,25 +18,42 @@ router.get('/login', function(req,res){
 });
 router.post('/login', function(req,res){
 
+    
+    userModel.findOne({'userID':'testuser'}, function(err, user){
+        if(err) return console.error(err);
+        console.log('User from db: ' + JSON.stringify(user));
+        req.session.theUser = user;
+        let id = user.userID;
+
+        userProfileModelDB.findOne({'userID': id}, function(err, profile){
+            console.log('userID: ' + user.userID);
+            
+            if(err) return console.error(err);
+            req.session.userProfile = profile;
+            console.log('fromDB: ' + JSON.stringify(profile));
+            
+            req.session.save(function(err){
+                if(err){
+                    
+                }
+                res.redirect('savedConnections');
+            });
+        });
+ 
+        
+    }); // Find  test user initialized in DB
+
+
+
+
     //hardcoded user
-    let loggedInUser = new user('userid', 'Bob', 'Smith', 'emailAddress');
-    req.session.theUser = loggedInUser;
+    // let loggedInUser = new user('userid', 'Bob', 'Smith', 'emailAddress');
+    // req.session.theUser = loggedInUser;
 
 
     // Grab all currently saved connections, but in this case hardcoded for now so just saying empty
-    let profile = new userProfileModel(loggedInUser.userID);
+    // let profile = new userProfileModel(loggedInUser.userID);
     // profile.addConnection(new userConn(new connectionModel('id', 'name', 'type', 'details','dateTime'),'yes'));
-
-    req.session.userProfile = profile;
-
-
-
-    req.session.save(function(err){
-        if(err){
-            
-        }
-        res.redirect('savedConnections');
-    });
 
 });
 
@@ -81,7 +100,7 @@ router.get('/savedConnections', function(req,res){
 
 
         res.render('savedConnections', {
-            userConnections: req.session.userProfile._userConnections, 
+            userConnections: req.session.userProfile.userConnections, 
             session: req.session
         });
     }
