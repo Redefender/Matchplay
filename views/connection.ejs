@@ -17,8 +17,13 @@
             <p><%- connection.details -%></p>
          </article>
          <form method="POST">
+            <!-- Connection Data -->
             <input type="hidden" name="connectionID" value="<%= connection.id %>">
-            <input type="text" name="test" value="">
+            <input type="hidden" name="name" value="<%= connection.name %>">
+            <input type="hidden" name="type" value="<%= connection.type %>">
+            <input type="hidden" name="dateTime" value="<%= connection.dateTime %>">
+            <input type="hidden" name="details" value="<%= connection.details %>">  
+
 
             <button  class="green" formaction="user/savedConnections/yes" 
                                                       type="submit">I'm In!</button>

@@ -1,5 +1,7 @@
+let mongoose = require('mongoose');
+let userProfileModel = require('./userProfileModel.js');
 let userConnection = require('../models/userConnection.js');
-
+let connectionModel = require('./connectionModel.js');
 
 class UserProfile {
     constructor(userID){
@@ -22,20 +24,29 @@ class UserProfile {
         this._userConnections = newuserConnections;
     }
 
-    addConnection(conn){
-        console.log('within addConnection ' + JSON.stringify(conn));
+    // add userConnection
+    // get user connections
+    //save into session, return view
+    async addUserConnection(userConnection, userID){
+        try{
+            let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
 
-        // check if there is another with same id
-        let duplicate = false;
-        for(let i =0; i< this._userConnections.length; i++){
-            if(this._userConnections[i]._connection._id === conn._connection._id){
-                this.updateConnection(i, conn);
-                duplicate = true;
-                break;
-            }
+            userProfile.userConnections.push(userConnection);
+            await userProfile.save();
+
+        } catch(err){
+            console.error(err);
         }
-        if(!duplicate){
-            this._userConnections.push(new userConnection(conn._connection, conn._rsvp));
+
+        // Make Sure they're not duplicatess
+    }
+    
+    getUserConnections(userID){
+        try{
+            return userProfileModel.findOne({'userID': userID}, { 'userConnections': 1, '_id': 0}).exec();
+
+        } catch(err){
+            console.error(err);
         }
     }
     
@@ -51,10 +62,13 @@ class UserProfile {
         }
     }
         
-
-    getUserConnections(){
-
+    saveUserConnection(conn){
+        let userID = req.session.theUser.userID;
+        userProfileModel.findOne({'userID': userID}, function(err, userProfile){
+            userProfile.userConnections.push(conn);
+        });
     }
+
 }
 
 module.exports = UserProfile;

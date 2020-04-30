@@ -26,14 +26,14 @@
                   <% for(var i =0; i< userConnections.length; i++) { %>
                      <tr>
 
-                        <td><%= userConnections[i]._connection._name %></td>
-                        <td><%= userConnections[i]._connection._type %></td>
-                        <td><%= userConnections[i]._rsvp %></td>
+                        <td><%= userConnections[i].name %></td>
+                        <td><%= userConnections[i].type %></td>
+                        <td><%= userConnections[i].rsvp %></td>
                         <td>
                            <button type="submit" 
-                              formaction="/user/update/<%= userConnections[i]._connection._id %>" class="green">Update</button>
+                              formaction="/user/update/<%= userConnections[i].connectionID %>" class="green">Update</button>
                            <button type="submit" formmethod="POST" 
-                              formaction="/user/delete/<%= userConnections[i]._connection._id %>" class="red">Delete</button>
+                              formaction="/user/delete/<%= userConnections[i].connectionID %>" class="red">Delete</button>
                         </td>
                      </tr>
                   <% } %>

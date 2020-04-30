@@ -3,13 +3,12 @@ var mongoose = require('mongoose');
 var router = express.Router();
 var userModel = require('../models/user.js');
 var userProfileModel = require('../utility/userProfile.js');
-var userProfileModelDB = require('../utility/userPRofileModel.js');
+var userProfileModelDB = require('../utility/userProfileModel.js');
 var connectionDB = require('../utility/connectionDB.js');
 var userConn = require('../models/userConnection.js');
 var connectionModel = require('../models/connection.js');
 var userConnection = require('../models/userConnection');
-// var connectionDB = require('../utility/connectionDB.js');
-
+var userConnectionModel = require('../utility/userConnectionModel.js').model;
 
 router.get('/login', function(req,res){
     
@@ -18,17 +17,17 @@ router.get('/login', function(req,res){
 });
 router.post('/login', function(req,res){
 
-    
+    // Grab the User
     userModel.findOne({'userID':'testuser'}, function(err, user){
         if(err) return console.error(err);
-        console.log('User from db: ' + JSON.stringify(user));
+
         req.session.theUser = user;
         let id = user.userID;
 
         userProfileModelDB.findOne({'userID': id}, function(err, profile){
-            console.log('userID: ' + user.userID);
-            
             if(err) return console.error(err);
+
+            // save userProfile into session
             req.session.userProfile = profile;
             console.log('fromDB: ' + JSON.stringify(profile));
             
@@ -39,21 +38,8 @@ router.post('/login', function(req,res){
                 res.redirect('savedConnections');
             });
         });
- 
         
     }); // Find  test user initialized in DB
-
-
-
-
-    //hardcoded user
-    // let loggedInUser = new user('userid', 'Bob', 'Smith', 'emailAddress');
-    // req.session.theUser = loggedInUser;
-
-
-    // Grab all currently saved connections, but in this case hardcoded for now so just saying empty
-    // let profile = new userProfileModel(loggedInUser.userID);
-    // profile.addConnection(new userConn(new connectionModel('id', 'name', 'type', 'details','dateTime'),'yes'));
 
 });
 
@@ -64,27 +50,43 @@ router.post('/savedConnections/:rsvp', function(req,res){
         
         res.redirect('/user/login');
     } else{
-
+        // When RSVPing to Connection
         let id = req.body.connectionID;
         let rsvp = req.params.rsvp;
-        let saved = null;
-        let conn = connectionDB.getConnection(id);
-    
-        let userConn = new userConnection(new connectionModel(conn._id, conn._name, conn._type,
-            conn._details,conn._dateTime), rsvp);
+        let userID = req.session.userProfile.userID;
+        let name = req.body.name;
+        let type = req.body.type;
+        let dateTime = req.body.dateTime;
+        let details = req.body.details;
+        
+
+        //save userConnection to DB
+        let userConnection = new userConnectionModel({
+            'connectionID': id,
+            'rsvp': rsvp,
+            'name': name,
+            'type': type,
+            'details': details,
+            'date:': dateTime
+        });
         
         // grab session profile, because session profile doesn't have prototype methods
-        let updateUserProfile = new userProfileModel(req.session.userProfile._userID);
-        updateUserProfile._userConnections = req.session.userProfile._userConnections;
-    
-        // perform prototype methods on updatedUserProfile
-        updateUserProfile.addConnection(userConn);
-    
-        // update session profile
-        req.session.userProfile = updateUserProfile;
-        console.log('before render  ' + JSON.stringify(req.session.userProfile));
-        
-        res.render('savedConnections', { session: req.session, userConnections: req.session.userProfile._userConnections });
+        let userProfile = new userProfileModel(userID);
+
+        (async ()=>{
+            try{
+
+                await userProfile.addUserConnection(userConnection, userID);
+                let userConnections = await userProfile.getUserConnections(userID);
+                req.session.userProfile.userConnections = userConnections;
+                res.render('savedConnections', { session: req.session, userConnections: userConnections.userConnections});
+
+            } catch(err){
+
+                console.error(err);
+            }
+      
+        })();
     }
 
 });
@@ -95,14 +97,22 @@ router.get('/savedConnections', function(req,res){
         res.redirect('login');
     } else{
 
-        // console.log('Request after redirect: ' + req.session.userProfile._userConnections[0].rsvp);
-        console.log('userprofile: ' + JSON.stringify( req.session.userProfile));
+        let userConnections = req.session.userProfile.userConnections
 
+        // Grab Connections Data
+        connectionDB.getConnectionsByID(userConnections)
+        .then((connectionData)=>{
+            console.log(connectionData);
 
-        res.render('savedConnections', {
-            userConnections: req.session.userProfile.userConnections, 
-            session: req.session
-        });
+            // assign the connection Data to the connections...
+
+            res.render('savedConnections', {
+                userConnections: userConnections, 
+                session: req.session
+            });
+            
+        })
+   
     }
 
 

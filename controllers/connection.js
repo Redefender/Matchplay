@@ -10,40 +10,36 @@ router.use(function timeLog (req, res, next) {
 
 router.get('/', function(req,res){
     
-    let connections = connectionDB.getConnections();
-    let id = req.query.id;
-    // if(containsEncodedComponents(id)){
-    //     id = decodeURIComponent(id);
-    // }
+    connectionDB.getConnections().then((connections)=>{
 
-
-    let connectionTypes = connectionDB.getConnectionTypes();
-
-    if(id){
-        let connection = connectionDB.getConnection(id);
-        if(connection !== undefined){
-            res.render('connection', {connection: connection, session: req.session})
-        }
-    } else{
-        // get the different connection categories
-        console.log(connections);
-        
-        // for(var i =0;i<connections.length;i++){
-        //     connectionTypes.push(connection[i].type);
-        // }
-        for(let type of connectionTypes){
-            console.log(type);
+        let id = req.query.id;
+        let connectionTypes = connectionDB.getConnectionTypes(connections);
+    
+        if(id){
+            // Grab connection from DB
+            connectionDB.getConnection(id)
+                .then((conn)=>{
+                    if(connection !== undefined){
+                        res.render('connection', {connection: conn, session: req.session})
+                    }
+            });
             
+        } else{
+            // get the different connection categories
+            console.log(connections);
+            
+            for(let type of connectionTypes){
+                console.log(type);
+                
+            }   
+            
+            res.render('connections', {
+                connections: connections, connectionTypes: connectionTypes, 
+                session: req.session});
         }
-        
-        res.render('connections', {
-            connections: connections, connectionTypes: connectionTypes, 
-            session: req.session});
-    }
+    });
 
 });
-
-
 
 router.get('/newConnection', function(req,res) {
     res.render('newConnection', {session: req.session});
