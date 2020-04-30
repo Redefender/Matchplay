@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 let connection = require('../models/connection');
-let connectionModel = require('./connectionModel.js');
+let connectionModel = require('../models/connectionModel.js');
 var ObjectId = require('mongodb').ObjectID;
 let connections = [
     
@@ -84,41 +84,9 @@ function getConnectionTypes(connections){
     return connectionTypes;
 }
 
-// function addSavedConnection(savedConn){
-//     savedConnections.push(new savedConnection(savedConn.connectionID, 
-//         savedConn.going)); 
-// }
-
-// function getSavedConnections(){
-//     return savedConnections;
-// }
-
-// function getSavedConnectionsView(){
-//     let savedConnectionViews = [];
-//     for(var i =0; i< savedConnections.length; i++){
-//         let connectionInfo = getConnection(savedConnections[i].connectionID);
-//         let savedConnView = new savedConnectionView(
-//             savedConnections[i].connectionID,
-//             savedConnections[i].going,
-//             connectionInfo.name,
-//             connectionInfo.type,
-//             connectionInfo.details,
-//             connectionInfo.dateTime
-//         )
-//         console.log('savedConnView ' + savedConnView.connectionID);
-        
-
-//         savedConnectionViews.push(savedConnView);
-//     }
-//     return savedConnectionViews;
-// }
-
 module.exports = {
     getConnections: getConnections,
     getConnection: getConnection,
-    // addSavedConnection: addSavedConnection,
-    // getSavedConnections: getSavedConnections,
-    // getSavedConnectionsView: getSavedConnectionsView,
     getConnectionTypes: getConnectionTypes,
     getConnectionsByID: getConnectionsByID
 };

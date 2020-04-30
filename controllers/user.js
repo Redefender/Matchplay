@@ -2,13 +2,10 @@ var express = require('express');
 var mongoose = require('mongoose');
 var router = express.Router();
 var userModel = require('../models/user.js');
-var userProfileModel = require('../utility/userProfile.js');
-var userProfileModelDB = require('../utility/userProfileModel.js');
+var userProfileDB = require('../utility/userProfileDB.js');
+var userProfile = require('../models/userProfile')
 var connectionDB = require('../utility/connectionDB.js');
-var userConn = require('../models/userConnection.js');
-var connectionModel = require('../models/connection.js');
-var userConnection = require('../models/userConnection');
-var userConnectionModel = require('../utility/userConnectionModel.js').model;
+var userConnectionModel = require('../models/userConnectionModel.js').model;
 
 router.get('/login', function(req,res){
     
@@ -24,7 +21,7 @@ router.post('/login', function(req,res){
         req.session.theUser = user;
         let id = user.userID;
 
-        userProfileModelDB.findOne({'userID': id}, function(err, profile){
+        userProfile.findOne({'userID': 'testuser'}, function(err, profile){
             if(err) return console.error(err);
 
             // save userProfile into session
@@ -69,17 +66,14 @@ router.post('/savedConnections/:rsvp', function(req,res){
             'details': details,
             'date:': dateTime
         });
-        
-        // grab session profile, because session profile doesn't have prototype methods
-        let userProfile = new userProfileModel(userID);
 
         (async ()=>{
             try{
 
-                await userProfile.addUserConnection(userConnection, userID);
-                let userConnections = await userProfile.getUserConnections(userID);
+                await userProfileDB.addUserConnection(userConnection, userID);
+                let userConnections = await userProfileDB.getUserConnections(userID);
                 req.session.userProfile.userConnections = userConnections;
-                res.render('savedConnections', { session: req.session, userConnections: userConnections.userConnections});
+                res.render('savedConnections', { session: req.session, userConnections: userConnections});
 
             } catch(err){
 
@@ -115,7 +109,6 @@ router.get('/savedConnections', function(req,res){
    
     }
 
-
 });
 
 router.get('/update/:updateID', function(req,res){
@@ -127,17 +120,16 @@ router.get('/update/:updateID', function(req,res){
 });
 
 router.post('/delete/:id', function(req, res){
-    console.log('hit');
-    
+
     let id = req.params.id;
-    let profile = new userProfileModel(req.session.userProfile._userID);
-    profile._userConnections = req.session.userProfile._userConnections;
-    profile.deleteConnection(id);
-    console.log('after delete: ' + JSON.stringify(profile));
-    
-    req.session.userProfile = profile;
-    res.redirect('/user/savedConnections');
-    
+    let userID = req.session.theUser.userID;
+    (async ()=>{
+        try {
+            await userProfileDB.deleteConnection(userID, id);
+            req.session.userProfile = await userProfileDB.getUserConnections(userID);
+            res.redirect('/user/savedConnections'); 
+        } catch(err) {console.error(err);}
+    })();
 });
 
 router.get('/signout', function(req,res){
