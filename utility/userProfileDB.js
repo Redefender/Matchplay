@@ -1,71 +1,63 @@
 let mongoose = require('mongoose');
-let userProfileModel = require('../models/userProfileModel.js');
-let userConnection = require('../models/userConnection.js');
-let connectionModel = require('../models/connectionModel.js');
+let userProfileModel = require('../models/userProfile.js');
 
-class UserProfile {
-    constructor(userID){
-        this._userID = userID;
-        this._userConnections = [];
-    }
-    get userID(){
-        return this._userID;
-    }
-    set userID(newuserID){
-        this._userID = newuserID;
-    }
-    
-    get userConnections(){
-        
-        return this._userConnections;
+
+let addUserConnection =  async function(userConnection, userID){
+    try{
+        let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
+
+        userProfile.userConnections.push(userConnection);
+        await userProfile.save();
+
+    } catch(err){
+        console.error(err);
     }
 
-    set userConnections(newuserConnections){
-        this._userConnections = newuserConnections;
-    }
-
-    async addUserConnection(userConnection, userID){
-        try{
-            let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
-
-            userProfile.userConnections.push(userConnection);
-            await userProfile.save();
-
-        } catch(err){
-            console.error(err);
-        }
-
-        // Make Sure they're not duplicatess
-    }
-    
-    getUserConnections(userID){
-        try{
-            return userProfileModel.findOne({'userID': userID}, { 'userConnections': 1, '_id': 0}).exec();
-
-        } catch(err){
-            console.error(err);
-        }
-    }
-    
-    updateConnection(userConnectionIndex, conn){
-        this._userConnections[userConnectionIndex]._rsvp = conn._rsvp;
-    }
-
-    deleteConnection(id){
-        for(var i =0; i< this._userConnections.length; i++){
-            if(this._userConnections[i]._connection._id == id){
-                this._userConnections.splice(i);
-            }
-        }
-    }
-        
-    saveUserConnection(conn){
-        let userID = req.session.theUser.userID;
-        userProfileModel.findOne({'userID': userID}, function(err, userProfile){
-            userProfile.userConnections.push(conn);
-        });
-    }
-
+    // Make Sure they're not duplicatess
 }
 
-module.exports = UserProfile;
+let getUserProfile = function (userID){
+
+    return userProfileModel.findOne({'userID': userID}).exec();
+}
+
+
+getUserConnections = async function (userID){
+
+    let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
+    return userProfile.userConnections;
+}
+
+let updateConnection = function(userConnectionIndex, conn){
+    this._userConnections[userConnectionIndex]._rsvp = conn._rsvp;
+}
+
+let deleteConnection = async function(userID, connectionID){
+    let userProfile = await userProfileModel.findOne({ 'userID': userID }).exec();
+    let userConnections = userProfile.userConnections;
+    for(var i = 0; i < userConnections.length; i++){
+        if(userConnections[i].connectionID == connectionID)
+            userConnections.splice(i, 1);
+    }
+
+    await userProfile.save();
+}
+        
+let saveUserConnection = function(conn){
+    let userID = req.session.theUser.userID;
+    userProfileModel.findOne({'userID': userID}, function(err, userProfile){
+        userProfile.userConnections.push(conn);
+    });
+}
+
+
+    
+module.exports = {
+    addUserConnection: addUserConnection,
+    getUserProfile: getUserProfile,
+    getUserConnections: getUserConnections,
+    updateConnection: updateConnection,
+    deleteConnection: deleteConnection,
+    saveUserConnection: saveUserConnection
+
+}
