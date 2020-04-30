@@ -2,13 +2,10 @@ var express = require('express');
 var mongoose = require('mongoose');
 var router = express.Router();
 var userModel = require('../models/user.js');
-var userProfileModel = require('../utility/userProfile.js');
-var userProfileModelDB = require('../utility/userProfileModel.js');
+var userProfileModel = require('../utility/userProfileDB.js');
+var userProfileModelDB = require('../models/userProfileModel.js');
 var connectionDB = require('../utility/connectionDB.js');
-var userConn = require('../models/userConnection.js');
-var connectionModel = require('../models/connection.js');
-var userConnection = require('../models/userConnection');
-var userConnectionModel = require('../utility/userConnectionModel.js').model;
+var userConnectionModel = require('../models/userConnectionModel.js').model;
 
 router.get('/login', function(req,res){
     
@@ -130,8 +127,8 @@ router.post('/delete/:id', function(req, res){
     console.log('hit');
     
     let id = req.params.id;
-    let profile = new userProfileModel(req.session.userProfile._userID);
-    profile._userConnections = req.session.userProfile._userConnections;
+    let profile = new userProfileModel(req.session.userProfile.userID);
+    profile.userConnections = req.session.userProfile.userConnections;
     profile.deleteConnection(id);
     console.log('after delete: ' + JSON.stringify(profile));
     

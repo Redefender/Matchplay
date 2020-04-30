@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
-let userProfileModel = require('./userProfileModel.js');
+let userProfileModel = require('../models/userProfileModel.js');
 let userConnection = require('../models/userConnection.js');
-let connectionModel = require('./connectionModel.js');
+let connectionModel = require('../models/connectionModel.js');
 
 class UserProfile {
     constructor(userID){
@@ -24,9 +24,6 @@ class UserProfile {
         this._userConnections = newuserConnections;
     }
 
-    // add userConnection
-    // get user connections
-    //save into session, return view
     async addUserConnection(userConnection, userID){
         try{
             let userProfile = await userProfileModel.findOne({'userID': userID}).exec();

@@ -8,4 +8,4 @@ let ConnectionSchema = new Schema({
     date: Date
 });
 
-module.exports = mongoose.model('connection', ConnectionSchema,);
+module.exports = mongoose.model('connection', ConnectionSchema);
