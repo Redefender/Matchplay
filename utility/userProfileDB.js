@@ -2,18 +2,19 @@ let mongoose = require('mongoose');
 let userProfileModel = require('../models/userProfile.js');
 
 
-let addUserConnection =  async function(userConnection, userID){
-    try{
-        let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
+let addUserConnection = async function(userConnection, userID){
 
-        userProfile.userConnections.push(userConnection);
-        await userProfile.save();
+    let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
+    let userConnections = userProfile.userConnections;
 
-    } catch(err){
-        console.error(err);
+    // Make sure userConnection is unique
+    for(var i =0; i< userConnections.length; i++){
+        if(userConnections[i].connectionID == userConnection.connectionID)
+            return;
     }
 
-    // Make Sure they're not duplicatess
+    userProfile.userConnections.push(userConnection);
+    await userProfile.save();
 }
 
 let getUserProfile = function (userID){
