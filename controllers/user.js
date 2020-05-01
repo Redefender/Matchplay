@@ -91,22 +91,8 @@ router.get('/savedConnections', function(req,res){
         res.redirect('login');
     } else{
 
-        let userConnections = req.session.userProfile.userConnections
-
-        // Grab Connections Data
-        connectionDB.getConnectionsByID(userConnections)
-        .then((connectionData)=>{
-            console.log(connectionData);
-
-            // assign the connection Data to the connections...
-
-            res.render('savedConnections', {
-                userConnections: userConnections, 
-                session: req.session
-            });
-            
-        })
-   
+        let userConnections = req.session.userProfile.userConnections;
+        res.render('savedConnections', {session: req.session, userConnections: userConnections});
     }
 
 });
@@ -123,10 +109,11 @@ router.post('/delete/:id', function(req, res){
 
     let id = req.params.id;
     let userID = req.session.theUser.userID;
+
     (async ()=>{
         try {
             await userProfileDB.deleteConnection(userID, id);
-            req.session.userProfile = await userProfileDB.getUserConnections(userID);
+            req.session.userProfile = await userProfileDB.getUserProfile(userID);
             res.redirect('/user/savedConnections'); 
         } catch(err) {console.error(err);}
     })();
