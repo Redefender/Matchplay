@@ -8,13 +8,13 @@
       <main>
          <%- include('partials/navigation.ejs'); -%>
          <h3>Create Tennis Event</h3>
-         <form id="newConnection" action="#">
+         <form id="newConnection" action="/user/createConnection" method="POST">
             <label for="name">Name</label> 
             <input type="text" name="name">
             <br>
             <br>
             <label for="Type">Type</label>
-            <input type="text" name="Type">
+            <input type="text" name="type">
             <br>
             <br>
             <label for="details">Details</label>
@@ -22,10 +22,10 @@
             <br>
             <br>
             <label for="dateTime">When</label>
-            <input type="text" name="dateTime">
+            <input type="date" name="date">
             <br>
             <br>
-            <input type="submit">
+            <input type="submit" >
          </form>
       </main>
       <%- include('partials/footer.ejs'); -%>

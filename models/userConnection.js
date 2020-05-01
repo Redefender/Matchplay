@@ -1,27 +1,17 @@
-var connection = require('./connection.js');
-class UserConnection {
-    constructor(conn, rsvp){
-        this._connection = new connection(conn.id, conn.name,
-            conn.type, conn.details, conn.dateTime);
-        this._rsvp = rsvp;
-    }
+let mongoose = require('mongoose');
+var Schema = mongoose.Schema,
+    ObjectId = Schema.ObjectId
 
-    get rsvp(){
-        return this._rsvp;
-    }
+let UserConnectionSchema = new Schema({
+    connectionID: String,
+    rsvp: String,
+    name: String,
+    type: String,
+    details: String,
+    date: Date
+});
 
-    set rsvp(newrsvp){
-        this._rsvp = newrsvp;
-    }
-    
-    get connection(){
-        return this._connection;
-    }
-
-    set connection(newconnection){
-        this._connection = newconnection;
-    }
-
+module.exports = {
+    model: mongoose.model('userConnection', UserConnectionSchema, 'userConnections'),
+    schema: UserConnectionSchema
 }
-
-module.exports = UserConnection;

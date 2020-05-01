@@ -17,23 +17,30 @@ let addUserConnection = async function(userConnection, userID){
     await userProfile.save();
 }
 
+
+// Creates a new UserConnection that user made
+let createUserConnection = async function(userConnection, userID){
+    
+    // make rsvp 'yes' since user created it
+    userConnection.rsvp = 'yes';
+
+    // add to userConnections list
+    return await addUserConnection(userConnection, userID);
+}
+
 let getUserProfile = function (userID){
 
     return userProfileModel.findOne({'userID': userID}).exec();
 }
 
 
-getUserConnections = async function (userID){
+let getUserConnections = async function (userID){
 
     let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
     return userProfile.userConnections;
 }
 
-let updateConnection = function(userConnectionIndex, conn){
-    this._userConnections[userConnectionIndex]._rsvp = conn._rsvp;
-}
-
-let deleteConnection = async function(userID, connectionID){
+let deleteUserConnection = async function(userID, connectionID){
     let userProfile = await userProfileModel.findOne({ 'userID': userID }).exec();
     let userConnections = userProfile.userConnections;
     for(var i = 0; i < userConnections.length; i++){
@@ -43,22 +50,12 @@ let deleteConnection = async function(userID, connectionID){
 
     await userProfile.save();
 }
-        
-let saveUserConnection = function(conn){
-    let userID = req.session.theUser.userID;
-    userProfileModel.findOne({'userID': userID}, function(err, userProfile){
-        userProfile.userConnections.push(conn);
-    });
-}
-
-
     
+
 module.exports = {
     addUserConnection: addUserConnection,
     getUserProfile: getUserProfile,
     getUserConnections: getUserConnections,
-    updateConnection: updateConnection,
-    deleteConnection: deleteConnection,
-    saveUserConnection: saveUserConnection
-
+    deleteUserConnection: deleteUserConnection,
+    createUserConnection: createUserConnection
 }

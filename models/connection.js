@@ -1,11 +1,11 @@
-class Connection {
-    constructor(id, name, type, details, dateTime){
-        this.id = id;
-        this.name = name;
-        this.type = type;
-        this.details = details;
-        this.dateTime = dateTime;
-    }
-}
+let mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-module.exports = Connection;
+let ConnectionSchema = new Schema({
+    name: String,
+    type: String,
+    details: String,
+    date: Date
+});
+
+module.exports = mongoose.model('connection', ConnectionSchema);

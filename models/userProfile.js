@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-let userConnectionModel = require('./userConnectionModel.js');
+let userConnectionModel = require('./userConnection.js');
 
 var Schema = mongoose.Schema;
 

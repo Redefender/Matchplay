@@ -1,11 +1,9 @@
 var express = require('express');
-var mongoose = require('mongoose');
 var router = express.Router();
-var userModel = require('../models/user.js');
+var userDB = require('../utility/userDB.js');
+const connectionDB = require('../utility/connectionDB.js');
 var userProfileDB = require('../utility/userProfileDB.js');
-var userProfile = require('../models/userProfile')
-var connectionDB = require('../utility/connectionDB.js');
-var userConnectionModel = require('../models/userConnectionModel.js').model;
+var userConnectionModel = require('../models/userConnection.js').model;
 
 router.get('/login', function(req,res){
     
@@ -14,15 +12,14 @@ router.get('/login', function(req,res){
 });
 router.post('/login', function(req,res){
 
-    // Grab the User
-    userModel.findOne({'userID':'testuser'}, function(err, user){
-        if(err) return console.error(err);
+    // Grab the hardcoded user
+    userDB.getUser('testuser').then((user)=>{
 
         req.session.theUser = user;
-        let id = user.userID;
+        let userID = user.userID;
 
-        userProfile.findOne({'userID': 'testuser'}, function(err, profile){
-            if(err) return console.error(err);
+        // Grab User Profile
+        userProfileDB.getUserProfile(userID).then((profile)=>{
 
             // save userProfile into session
             req.session.userProfile = profile;
@@ -35,8 +32,9 @@ router.post('/login', function(req,res){
                 res.redirect('savedConnections');
             });
         });
-        
-    }); // Find  test user initialized in DB
+    }, (err)=>{
+        return console.error(err);
+    });
 
 });
 
@@ -56,7 +54,6 @@ router.post('/savedConnections/:rsvp', function(req,res){
         let dateTime = req.body.dateTime;
         let details = req.body.details;
         
-
         //save userConnection to DB
         let userConnection = new userConnectionModel({
             'connectionID': id,
@@ -85,6 +82,51 @@ router.post('/savedConnections/:rsvp', function(req,res){
 
 });
 
+router.post('/createConnection',function(req,res){
+    if(!req.session.theUser){
+        res.redirect('login');
+    } else{
+        // When RSVPing to Connection
+        let userID = req.session.userProfile.userID;
+
+        (async()=>{
+
+            try{
+
+                //save userConnection to DB
+                let connection = await connectionDB.createConnection(req.body)
+
+                // create userConnection for userProfile
+                let userConnection = new userConnectionModel({
+                    'connectionID': connection._id,
+                    'name': connection.name,
+                    'type': connection.type,
+                    'details': connection.details,
+                    'date:': connection.dateTime
+                });
+
+                // save user connection, with rsvp 'yes'
+                await userProfileDB.createUserConnection(userConnection, userID);
+
+                // grab userConnections
+                let userConnections = await userProfileDB.getUserConnections(userID);
+                
+                // save to session
+                req.session.userProfile.userConnections = userConnections;
+
+                res.redirect('/user/savedConnections');
+
+            } catch(err){
+                console.error(err);
+            }
+            
+        })();
+
+    }
+});
+
+router.post('')
+
 router.get('/savedConnections', function(req,res){
 
     if(!req.session.theUser){
@@ -112,7 +154,7 @@ router.post('/delete/:id', function(req, res){
 
     (async ()=>{
         try {
-            await userProfileDB.deleteConnection(userID, id);
+            await userProfileDB.deleteUserConnection(userID, id);
             req.session.userProfile = await userProfileDB.getUserProfile(userID);
             res.redirect('/user/savedConnections'); 
         } catch(err) {console.error(err);}

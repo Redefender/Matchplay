@@ -1,12 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var connection = require('../models/connection.js');
 var connectionDB = require('../utility/connectionDB.js');
-
-router.use(function timeLog (req, res, next) {
-    console.log('Time: ', Date.now())
-    next()
-  })
 
 router.get('/', function(req,res){
     
@@ -19,19 +13,12 @@ router.get('/', function(req,res){
             // Grab connection from DB
             connectionDB.getConnection(id)
                 .then((conn)=>{
-                    if(connection !== undefined){
+                    if(conn !== undefined){
                         res.render('connection', {connection: conn, session: req.session})
                     }
             });
             
         } else{
-            // get the different connection categories
-            console.log(connections);
-            
-            for(let type of connectionTypes){
-                console.log(type);
-                
-            }   
             
             res.render('connections', {
                 connections: connections, connectionTypes: connectionTypes, 
@@ -44,10 +31,5 @@ router.get('/', function(req,res){
 router.get('/newConnection', function(req,res) {
     res.render('newConnection', {session: req.session});
 });
-
-function containsEncodedComponents(x) {
-    // ie ?,=,&,/ etc
-    return (decodeURI(x) !== decodeURIComponent(x));
-  }
 
 module.exports = router;
