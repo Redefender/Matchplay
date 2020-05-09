@@ -1,44 +1,67 @@
-var express = require('express');
-var router = express.Router();
-var userDB = require('../utility/userDB.js');
+const express = require('express');
+const router = express.Router();
+const userDB = require('../utility/userDB.js');
 const connectionDB = require('../utility/connectionDB.js');
-var userProfileDB = require('../utility/userProfileDB.js');
-var userConnectionModel = require('../models/userConnection.js').model;
+const userProfileDB = require('../utility/userProfileDB.js');
+const userConnectionModel = require('../models/userConnection.js').model;
+const { check, validationResult } = require('express-validator');
 
 router.get('/login', function(req,res){
     
     res.render('login', {session: req.session});
 
 });
-router.post('/login', function(req,res){
+router.post('/login',[
 
-    // Grab the hardcoded user
-    userDB.getUser('testuser').then((user)=>{
+    // Validate / Sanitize
+    check('username').isLength({min: 5})
+    .withMessage("Must be at least 5 characters")
+    .trim()
+    .escape(),
+    check('password').isLength({min:7})
+    .withMessage("must be at least 7 characters")
+    .trim()
+    .escape()
+], async function(req,res){
+
+    // Check Validation
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+
+        req.session.loginErrors = errors.array();
+        return res.redirect('login');
+    }
+
+    try{
+
+        // Grab the hardcoded user
+        let user = await userDB.getUser('testuser');
 
         req.session.theUser = user;
         let userID = user.userID;
 
         // Grab User Profile
-        userProfileDB.getUserProfile(userID).then((profile)=>{
+        let profile = await userProfileDB.getUserProfile(userID)
 
-            // save userProfile into session
-            req.session.userProfile = profile;
-            console.log('fromDB: ' + JSON.stringify(profile));
+        // save userProfile into session
+        req.session.userProfile = profile;
+        console.log('fromDB: ' + JSON.stringify(profile));
             
-            req.session.save(function(err){
-                if(err){
-                    
-                }
-                res.redirect('savedConnections');
-            });
+        req.session.save(function(err){
+            if(err){
+                
+            }
+            res.redirect('savedConnections');
         });
-    }, (err)=>{
+
+    } catch(err){
+
         return console.error(err);
-    });
+    }
 
 });
 
-router.post('/savedConnections/:rsvp', function(req,res){
+router.post('/savedConnections/:rsvp', async function(req,res){
 
     if(!req.session.theUser){
         console.log('in here');
@@ -64,68 +87,60 @@ router.post('/savedConnections/:rsvp', function(req,res){
             'date:': dateTime
         });
 
-        (async ()=>{
-            try{
 
-                await userProfileDB.addUserConnection(userConnection, userID);
-                let userConnections = await userProfileDB.getUserConnections(userID);
-                req.session.userProfile.userConnections = userConnections;
-                res.render('savedConnections', { session: req.session, userConnections: userConnections});
+        try{
+            await userProfileDB.addUserConnection(userConnection, userID);
+            let userConnections = await userProfileDB.getUserConnections(userID);
+            req.session.userProfile.userConnections = userConnections;
+            res.render('savedConnections', { session: req.session, userConnections: userConnections});
 
-            } catch(err){
+        } catch(err){
 
-                console.error(err);
-            }
+            console.error(err);
+        }
       
-        })();
     }
 
 });
 
-router.post('/createConnection',function(req,res){
+router.post('/createConnection',async function(req,res){
     if(!req.session.theUser){
         res.redirect('login');
     } else{
         // When RSVPing to Connection
         let userID = req.session.userProfile.userID;
+        
+        try{
 
-        (async()=>{
+            //save userConnection to DB
+            let connection = await connectionDB.createConnection(req.body)
 
-            try{
+            // create userConnection for userProfile
+            let userConnection = new userConnectionModel({
+                'connectionID': connection._id,
+                'name': connection.name,
+                'type': connection.type,
+                'details': connection.details,
+                'date:': connection.dateTime
+            });
 
-                //save userConnection to DB
-                let connection = await connectionDB.createConnection(req.body)
+            // save user connection, with rsvp 'yes'
+            await userProfileDB.createUserConnection(userConnection, userID);
 
-                // create userConnection for userProfile
-                let userConnection = new userConnectionModel({
-                    'connectionID': connection._id,
-                    'name': connection.name,
-                    'type': connection.type,
-                    'details': connection.details,
-                    'date:': connection.dateTime
-                });
-
-                // save user connection, with rsvp 'yes'
-                await userProfileDB.createUserConnection(userConnection, userID);
-
-                // grab userConnections
-                let userConnections = await userProfileDB.getUserConnections(userID);
-                
-                // save to session
-                req.session.userProfile.userConnections = userConnections;
-
-                res.redirect('/user/savedConnections');
-
-            } catch(err){
-                console.error(err);
-            }
+            // grab userConnections
+            let userConnections = await userProfileDB.getUserConnections(userID);
             
-        })();
+            // save to session
+            req.session.userProfile.userConnections = userConnections;
 
+            res.redirect('/user/savedConnections');
+
+        } catch(err){
+            console.error(err);
+        }
+            
     }
 });
-
-router.post('')
 
 router.get('/savedConnections', function(req,res){
 
@@ -147,18 +162,18 @@ router.get('/update/:updateID', function(req,res){
     
 });
 
-router.post('/delete/:id', function(req, res){
+router.post('/delete/:id', async function(req, res){
 
     let id = req.params.id;
     let userID = req.session.theUser.userID;
 
-    (async ()=>{
-        try {
-            await userProfileDB.deleteUserConnection(userID, id);
-            req.session.userProfile = await userProfileDB.getUserProfile(userID);
-            res.redirect('/user/savedConnections'); 
-        } catch(err) {console.error(err);}
-    })();
+
+    try {
+        await userProfileDB.deleteUserConnection(userID, id);
+        req.session.userProfile = await userProfileDB.getUserProfile(userID);
+        res.redirect('/user/savedConnections'); 
+    } catch(err) {console.error(err);}
+
 });
 
 router.get('/signout', function(req,res){

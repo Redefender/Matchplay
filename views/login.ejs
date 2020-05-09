@@ -8,12 +8,22 @@
       <main>
          <%- include('partials/navigation.ejs'); -%>
          <h3>Welcome to the Site!</h3>
+
+         <!-- Validation Errors -->
+         <% if(session.loginErrors) { %>
+            <div>
+               <% for(let i =0; i< session.loginErrors.length; i++){ %>
+                  <p><%= session.loginErrors[i].msg %> for <%= session.loginErrors[i].param %></p>   
+               <% } %>
+            </div>
+         <% } %>
+         
          <form id="loginForm" action="/user/login" method="POST">
             <label>
                Username <input type="text" name="username">
             </label>
             <label for="password" name="password">
-               Password <input type="text" name="username">
+               Password <input type="text" name="password">
             </label>
             <label for="">
                <input type="submit" value="Login">

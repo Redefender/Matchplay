@@ -28,9 +28,9 @@ let createUserConnection = async function(userConnection, userID){
     return await addUserConnection(userConnection, userID);
 }
 
-let getUserProfile = function (userID){
+let getUserProfile = async function (userID){
 
-    return userProfileModel.findOne({'userID': userID}).exec();
+    return await userProfileModel.findOne({'userID': userID}).exec();
 }
 
 

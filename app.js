@@ -1,6 +1,5 @@
 var express = require('express');
-var connection = require('./controllers/connection.js')
-var connectionDB = require('./utility/connectionDB.js')
+var connection = require('./controllers/connection.js');
 var user = require('./controllers/user.js');
 var bodyParser = require('body-parser');
 var session = require('express-session');
