@@ -33,19 +33,23 @@ router.post('/login',[
     }
 
     try{
+        // grab user credentials
+        let username = req.body.username;
+        let password = req.body.password;
 
-        // Grab the hardcoded user
-        let user = await userDB.getUser('testuser');
+        // Check if existing user
+        let isUser = await userDB.isValidUser(username, password);
 
-        req.session.theUser = user;
-        let userID = user.userID;
+        // if not return error
+        if(!isUser){
+            return;
+        }
+
+        // continue, grab user
+        req.session.theUser = await userDB.getUser(username);
 
         // Grab User Profile
-        let profile = await userProfileDB.getUserProfile(userID)
-
-        // save userProfile into session
-        req.session.userProfile = profile;
-        console.log('fromDB: ' + JSON.stringify(profile));
+        req.session.userProfile = await userProfileDB.getUserProfile(username)
             
         req.session.save(function(err){
             if(err){
@@ -109,7 +113,7 @@ router.post('/createConnection',async function(req,res){
     } else{
         // When RSVPing to Connection
         let userID = req.session.userProfile.userID;
-        
+
         try{
 
             //save userConnection to DB
