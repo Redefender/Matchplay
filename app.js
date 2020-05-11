@@ -24,17 +24,6 @@ app.get('/', function(req,res){
     res.render('index', {session: req.session});
 });
 
-// app.use((req, res, next) => {
-//     const oldRedirect = res.redirect;
-//     res.redirect = function (...args) {
-//         if (req.session) {
-//         // redirecting after saving...
-//         req.session.save(() => Reflect.apply(oldRedirect, this, args))
-//         } else {
-//         Reflect.apply(oldRedirect, this, args);
-//         }
-//     }
-// })
 app.use('/connections', connection);
 app.use('/user', user);
 app.get('/about', function(req, res){
@@ -54,4 +43,4 @@ app.get('/*', function(req,res){
 
 });
 
-app.listen(process.env.port || 3000);
+app.listen(process.env.PORT || 3000);
