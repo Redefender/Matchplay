@@ -6,7 +6,8 @@ var session = require('express-session');
 var mongoose = require('mongoose');
 
 // put in mongoose
-mongoose.connect('mongodb://localhost/tennis', {useNewUrlParser: true});
+
+mongoose.connect(process.env.DB_URI);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console,'connection error:'));
 
@@ -53,4 +54,4 @@ app.get('/*', function(req,res){
 
 });
 
-app.listen(3000, "127.0.0.1");
+app.listen(process.env.port || 3000);
