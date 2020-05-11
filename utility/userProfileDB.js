@@ -33,7 +33,6 @@ let getUserProfile = async function (userID){
     return await userProfileModel.findOne({'userID': userID}).exec();
 }
 
-
 let getUserConnections = async function (userID){
 
     let userProfile = await userProfileModel.findOne({'userID': userID}).exec();
@@ -50,6 +49,11 @@ let deleteUserConnection = async function(userID, connectionID){
 
     await userProfile.save();
 }
+
+let registerUserProfile = function(user){
+    return user.save();
+}
+
     
 
 module.exports = {
@@ -57,5 +61,6 @@ module.exports = {
     getUserProfile: getUserProfile,
     getUserConnections: getUserConnections,
     deleteUserConnection: deleteUserConnection,
-    createUserConnection: createUserConnection
+    createUserConnection: createUserConnection,
+    registerUserProfile: registerUserProfile
 }

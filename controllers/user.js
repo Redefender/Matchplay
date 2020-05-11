@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const userDB = require('../utility/userDB.js');
+const user = require('../models/user.js')
+const userProfile = require('../models/userProfile.js');
 const connectionDB = require('../utility/connectionDB.js');
 const userProfileDB = require('../utility/userProfileDB.js');
 const userConnectionModel = require('../models/userConnection.js').model;
@@ -25,7 +27,7 @@ router.post('/login',[
 ], async function(req,res){
 
     // Check Validation
-    const errors = validationResult(req)
+    const errors = validationResult(req);
     if(!errors.isEmpty()){
 
         req.session.loginErrors = errors.array();
@@ -184,5 +186,76 @@ router.get('/signout', function(req,res){
     req.session.destroy();
     res.redirect('index');
 });
+
+router.get('/signup', function(req,res){
+    res.render('signup', {session: req.session});
+})
+router.post('/signup', [
+    // Validate / Sanitize
+    check('username').isLength({min: 5})
+    .withMessage("Must be at least 5 characters")
+    .trim()
+    .escape(),
+    check('password').isLength({min:7})
+    .withMessage("must be at least 7 characters")
+    .trim()
+    .escape()
+], async function(req,res){
+
+    // Check Validation
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+
+        return res.render('signup', {signupErrors: errors.array()});
+    }
+
+    try{
+        // grab user credentials
+        const { username, password, firstname, lastname, email } = req.body;
+
+        // Check duplicity
+        let isDuplicate = await userDB.isDuplicateUser(username);
+
+        // if duplicate return error
+        if(isDuplicate){
+            req.session.signupErrors = errors.array();
+            return res.render('signup', {invalidUser: true});
+        }
+
+        // Create User Model
+        let registerUser = new user({
+            userID: username,
+            firstname: firstname,
+            lastname: lastname,
+            email: email,
+            password: password
+        });
+
+        // continue, Register User
+        req.session.theUser = await userDB.registerUser(registerUser);
+
+        // Create User Profile Model
+        let registeredUserProfile = new userProfile({
+            userID: username,
+            userConnections: []
+        })
+
+        // Grab User Profile
+        req.session.userProfile = await userProfileDB
+            .registerUserProfile(registeredUserProfile)
+            
+        req.session.save(function(err){
+            if(err){
+                
+            }
+            res.redirect('savedConnections');
+        });
+
+    } catch(err){
+
+        return console.error(err);
+    }
+});
+
 
 module.exports = router;

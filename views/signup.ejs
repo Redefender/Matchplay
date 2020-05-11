@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+   <head>
+      <%- include('partials/meta.ejs'); -%>
+   </head>
+   <body>
+      <%- include('partials/header.ejs'); -%> 
+      <main>
+         <%- include('partials/navigation.ejs'); -%>
+         <h3>Welcome to the Site!</h3>
+
+         <!-- Validation Errors -->
+         <% if(typeof signupErrors !== 'undefined') { %>
+            <div>
+               <% for(let i =0; i< session.loginErrors.length; i++){ %>
+                  <p><%= signupErrors[i].msg %> for <%= signupErrors[i].param %></p>   
+               <% } %>
+            </div>
+         <% } %>
+
+        <!-- Invalid User Error -->
+        <% if (typeof invalidUser !== 'undefined' && invalidUser) { %>
+            <div>
+                <p>User already registered</p>
+            </div>
+        <% } %>
+
+         <form id="loginForm" action="/user/signup" method="POST">
+            <label>
+               Username <input type="text" name="username">
+            </label>
+            <label>
+               First Name <input type="text" name="firstname">
+            </label>
+            <label>
+               Last Name <input type="text" name="lastname">
+            </label>
+            <label>
+               Email <input type="text" name="email">
+            </label>
+            <label for="password" name="password">
+               Password <input type="text" name="password">
+            </label>
+            <label for="">
+               <input type="submit">
+            </label>
+         </form>
+      </main>
+      <%- include('partials/footer.ejs'); -%>
+   </body>
+</html>

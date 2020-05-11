@@ -8,7 +8,17 @@ let isValidUser = async function(username, password){
     return await user.exists({'userID': username, 'password': password});
 }
 
+let isDuplicateUser = async function(username){
+    return await user.exists({'userID': username});
+}
+
+let registerUser = async function(user){
+    return user.save();
+}
+
 module.exports = {
     getUser: getUser,
-    isValidUser: isValidUser
+    isValidUser: isValidUser,
+    isDuplicateUser: isDuplicateUser,
+    registerUser: registerUser
 }
