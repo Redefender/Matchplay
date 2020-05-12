@@ -44,7 +44,7 @@ router.post('/login',[
 
         // if not return error
         if(!isUser){
-            res.render('login');
+            res.render('login', {unregisteredUser: true});
             return;
         }
 
@@ -151,7 +151,7 @@ router.post('/createConnection',async function(req,res){
 
 router.get('/savedConnections', function(req,res){
 
-    if(!req.session.theUser){
+        if(req.session.theUser){
         res.redirect('login');
     } else{
 

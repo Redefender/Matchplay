@@ -9,11 +9,16 @@
          <%- include('partials/navigation.ejs'); -%>
          <h3>Welcome to the Site!</h3>
          <!-- Validation Errors -->
-         <% if(session.loginErrors) { %>
+         <% if(typeof session !=='undefined' && session.loginErrors) { %>
             <div>
                <% for(let i =0; i< session.loginErrors.length; i++){ %>
                   <p><%= session.loginErrors[i].msg %> for <%= session.loginErrors[i].param %></p>   
                <% } %>
+            </div>
+         <% } %>
+         <% if(typeof unregisteredUser !== 'undefined' && unregisteredUser) { %>
+            <div>
+               <p>Invalid Credentials. Username / password combo not found</p>
             </div>
          <% } %>
          
