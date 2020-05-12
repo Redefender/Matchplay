@@ -5,7 +5,9 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var mongoose = require('mongoose');
 
-// put in mongoose
+// Env Variables for dev environment, but will 
+// fail silently in production
+require('dotenv').config()
 
 mongoose.connect(process.env.DB_URI);
 var db = mongoose.connection;

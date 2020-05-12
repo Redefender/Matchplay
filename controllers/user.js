@@ -9,16 +9,16 @@ const userConnectionModel = require('../models/userConnection.js').model;
 const { check, validationResult } = require('express-validator');
 
 router.get('/login', function(req,res){
-    
     res.render('login', {session: req.session});
+    
 
 });
 router.post('/login',[
-
-    // Validate / Sanitize
+    
     check('username').isLength({min: 5})
     .withMessage("Must be at least 5 characters")
     .trim()
+    // Validate / Sanitize
     .escape(),
     check('password').isLength({min:7})
     .withMessage("must be at least 7 characters")
