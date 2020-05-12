@@ -44,6 +44,7 @@ router.post('/login',[
 
         // if not return error
         if(!isUser){
+            res.render('login');
             return;
         }
 
@@ -52,7 +53,7 @@ router.post('/login',[
 
         // Grab User Profile
         req.session.userProfile = await userProfileDB.getUserProfile(username)
-            
+    
         req.session.save(function(err){
             if(err){
                 

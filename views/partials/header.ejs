@@ -3,8 +3,8 @@
     <img id="tennisBall" src="/img/tennis-ball.png" alt="tennis ball">
     </a>
     <nav class="user-nav">
-       <a href="/connections/newConnection">Host Tennis</a>
-      <% if(typeof session !== 'undefined' && session.theUser) { %>
+       <% if(typeof session !== 'undefined' && session.theUser) { %>
+         <a href="/connections/newConnection">Host Tennis</a>
          <a href="/user/savedConnections">Your Tennis</a>
          <a href="/user/signout">Signout</a>
       <% } else { %>

@@ -11,7 +11,7 @@ require('dotenv').config()
 
 mongoose.connect(process.env.DB_URI);
 var db = mongoose.connection;
-db.on('error', console.error.bind(console,'connection error:'));
+db.on('error', console.error.bind(console,'connection error:'), {useNewUrlParser: true})
 
 var app = express();
 app.use(bodyParser.urlencoded({ extended: false}));

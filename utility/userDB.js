@@ -5,7 +5,7 @@ let getUser = async function(userID){
 }
 
 let isValidUser = async function(username, password){
-    return await user.exists({'userID': username, 'password': password});
+    return user.exists({'userID': username, 'password': password});
 }
 
 let isDuplicateUser = async function(username){
