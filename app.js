@@ -37,8 +37,6 @@ app.get('/contact', function(req, res){
     res.render('contact', {session: req.session});
 });
 
-
-
 app.get('/*', function(req,res){
 
     res.render('index', {session: session});

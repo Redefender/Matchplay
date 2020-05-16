@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userDB = require('../utility/userDB.js');
 const user = require('../models/user.js')
-const userProfile = require('../models/userProfile.js');
+const userProfile =require('../models/userProfile.js');
 const connectionDB = require('../utility/connectionDB.js');
 const userProfileDB = require('../utility/userProfileDB.js');
 const userConnectionModel = require('../models/userConnection.js').model;
@@ -11,16 +11,12 @@ const { check, validationResult } = require('express-validator');
 router.get('/login', function(req,res){
     res.render('login', {session: req.session});
     
-
-});
-router.post('/login',[
-    
+}); router.post('/login',[ 
     check('username').isLength({min: 5})
     .withMessage("Must be at least 5 characters")
     .trim()
     // Validate / Sanitize
-    .escape(),
-    check('password').isLength({min:7})
+    .escape(), check('password').isLength({min:7})
     .withMessage("must be at least 7 characters")
     .trim()
     .escape()
@@ -149,14 +145,14 @@ router.post('/createConnection',async function(req,res){
     }
 });
 
-router.get('/savedConnections', function(req,res){
+router.get('/savedConnections', function(req,res){ 
 
-        if(req.session.theUser){
+    if (!req.session.theUser) {
         res.redirect('login');
-    } else{
+    } else {
 
         let userConnections = req.session.userProfile.userConnections;
-        res.render('savedConnections', {session: req.session, userConnections: userConnections});
+        res.render('savedConnections', { session: req.session, userConnections: userConnections });
     }
 
 });
@@ -232,6 +228,7 @@ router.post('/signup', [
             password: password
         });
 
+
         // continue, Register User
         req.session.theUser = await userDB.registerUser(registerUser);
 
@@ -239,8 +236,8 @@ router.post('/signup', [
         let registeredUserProfile = new userProfile({
             userID: username,
             userConnections: []
+            
         })
-
         // Grab User Profile
         req.session.userProfile = await userProfileDB
             .registerUserProfile(registeredUserProfile)
@@ -251,10 +248,11 @@ router.post('/signup', [
             }
             res.redirect('savedConnections');
         });
-
+        
     } catch(err){
 
         return console.error(err);
+
     }
 });
 
